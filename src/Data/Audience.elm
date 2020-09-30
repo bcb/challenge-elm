@@ -1,5 +1,5 @@
 module Data.Audience exposing
-    ( AudienceType(..), Audience
+    ( AudienceType(..), Audience, decoder
     , audiencesJSON
     )
 
@@ -10,9 +10,13 @@ This module implements everything related to audience resource.
 
 # Interface
 
-@docs AudienceType, Audience, audienceJSON
+@docs AudienceType, Audience, audienceJSON, decoder
 
 -}
+
+import Json.Decode as Decode
+
+
 
 -- Type definition
 
@@ -33,6 +37,62 @@ type alias Audience =
     , type_ : AudienceType
     , folder : Maybe Int
     }
+
+
+type alias RawData =
+    { id : Int
+    , name : String
+    , type_ : String
+    , folder : Maybe Int
+    }
+
+
+rawDataDecoder : Decode.Decoder RawData
+rawDataDecoder =
+    Decode.map4 RawData
+        (Decode.field "id" Decode.int)
+        (Decode.field "name" Decode.string)
+        (Decode.field "type" Decode.string)
+        (Decode.field "folder" (Decode.nullable Decode.int))
+
+
+createAudience : Int -> String -> AudienceType -> Maybe Int -> Audience
+createAudience id name type_ folder =
+    { id = id
+    , name = name
+    , type_ = type_
+    , folder = folder
+    }
+
+
+decodeAudienceType : String -> Decode.Decoder AudienceType
+decodeAudienceType str =
+    case str of
+        "user" ->
+            Decode.succeed Authored
+
+        "shared" ->
+            Decode.succeed Shared
+
+        "curated" ->
+            Decode.succeed Curated
+
+        _ ->
+            Decode.fail ("Invalid audience type: " ++ str)
+
+
+rawDataToAudience : RawData -> Decode.Decoder Audience
+rawDataToAudience rawData =
+    Decode.map4 createAudience
+        (Decode.succeed rawData.id)
+        (Decode.succeed rawData.name)
+        (decodeAudienceType rawData.type_)
+        (Decode.succeed rawData.folder)
+
+
+decoder : Decode.Decoder (List Audience)
+decoder =
+    Decode.field "data" (rawDataDecoder |> Decode.andThen rawDataToAudience |> Decode.list)
 
 
 
