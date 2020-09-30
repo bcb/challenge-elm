@@ -1,0 +1,35 @@
+{
+  "name": "challenge-elm",
+  "version": "1.0.0",
+  "description": "Hello! Welcome to the Elm Challenge.",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "husky": "^4.3.0",
+    "lint-staged": "^10.4.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.elm": [
+      "elm-format --validate",
+      "elm-review"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GlobalWebIndex/challenge-elm.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GlobalWebIndex/challenge-elm/issues"
+  },
+  "homepage": "https://github.com/GlobalWebIndex/challenge-elm#readme"
+}
