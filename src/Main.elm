@@ -76,19 +76,6 @@ showUpFolder currentFolderId parentFolderId =
             Html.text ""
 
 
-showAudience : String -> Html Msg
-showAudience name =
-    Html.button
-        [ classList [ ( "button", True ), ( "audience", True ) ] ]
-        [ FeatherIcons.edit2
-            |> FeatherIcons.toHtml
-                [ style "vertical-align" "middle"
-                , style "display" "inline-block"
-                ]
-        , Html.span [ class "text" ] [ Html.text name ]
-        ]
-
-
 showAudienceFolder : Int -> String -> Html Msg
 showAudienceFolder id name =
     Html.button
@@ -102,6 +89,13 @@ showAudienceFolder id name =
                 ]
         , Html.span [ class "text" ] [ Html.text name ]
         ]
+
+
+showAudience : String -> Html Msg
+showAudience name =
+    Html.button
+        [ classList [ ( "button", True ), ( "audience", True ) ] ]
+        [ Html.span [ class "text" ] [ Html.text name ] ]
 
 
 view model =
