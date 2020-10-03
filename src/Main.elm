@@ -3,8 +3,10 @@ module Main exposing (main)
 import Browser
 import Data.Audience as Audience
 import Data.AudienceFolder as AudienceFolder
-import Debug exposing (log)
+import FeatherIcons
 import Html exposing (Html)
+import Html.Attributes exposing (class, classList, style)
+import Html.Events exposing (onClick)
 import Json.Decode as Decode
 
 
@@ -12,7 +14,6 @@ type alias LoadedModel =
     { audienceFolders : List AudienceFolder.AudienceFolder
     , audiences : List Audience.Audience
     , currentFolderId : Maybe Int
-    , currentFolderName : String
     }
 
 
@@ -21,52 +22,108 @@ type Model
     | Failure
 
 
+type Msg
+    = SetFolder (Maybe Int)
+
+
 init : Model
 init =
-    let
-        audienceFoldersDecoded =
-            Decode.decodeString AudienceFolder.decoder AudienceFolder.audienceFoldersJSON
-
-        audiencesDecoded =
-            Decode.decodeString Audience.decoder Audience.audiencesJSON
-    in
-    case ( audienceFoldersDecoded, audiencesDecoded ) of
+    case
+        ( Decode.decodeString AudienceFolder.decoder AudienceFolder.audienceFoldersJSON
+        , Decode.decodeString Audience.decoder Audience.audiencesJSON
+        )
+    of
         ( Ok audienceFolders, Ok audiences ) ->
             Success
                 { audienceFolders = audienceFolders
                 , audiences = audiences
-                , currentFolderId = Nothing
-                , currentFolderName = "Root"
+                , currentFolderId = Nothing -- Root folder
                 }
 
-        ( Err _, _ ) ->
-            Failure
-
-        ( _, Err _ ) ->
+        _ ->
             Failure
 
 
-update : msg -> Model -> Model
-update _ model =
-    model
+update : Msg -> Model -> Model
+update msg model =
+    case model of
+        Success loadedModel ->
+            case msg of
+                SetFolder id ->
+                    Success { loadedModel | currentFolderId = id }
+
+        Failure ->
+            model
 
 
-createFolder : Maybe Int -> String -> Html msg
-createFolder _ name =
-    Html.li [] [ Html.text name ]
+showUpFolder : Maybe Int -> Maybe Int -> Html Msg
+showUpFolder currentFolderId parentFolderId =
+    case currentFolderId of
+        Just _ ->
+            Html.button
+                [ classList [ ( "button", True ), ( "parent", True ) ]
+                , onClick (SetFolder parentFolderId)
+                ]
+                [ FeatherIcons.arrowLeft
+                    |> FeatherIcons.toHtml
+                        [ style "vertical-align" "middle"
+                        , style "display" "inline-block"
+                        ]
+                , Html.span [ class "text" ] [ Html.text "Up" ]
+                ]
+
+        Nothing ->
+            Html.text ""
+
+
+showAudience : String -> Html Msg
+showAudience name =
+    Html.button
+        [ classList [ ( "button", True ), ( "audience", True ) ] ]
+        [ FeatherIcons.edit2
+            |> FeatherIcons.toHtml
+                [ style "vertical-align" "middle"
+                , style "display" "inline-block"
+                ]
+        , Html.span [ class "text" ] [ Html.text name ]
+        ]
+
+
+showAudienceFolder : Int -> String -> Html Msg
+showAudienceFolder id name =
+    Html.button
+        [ classList [ ( "button", True ), ( "audienceFolder", True ) ]
+        , onClick (SetFolder (Just id))
+        ]
+        [ FeatherIcons.folder
+            |> FeatherIcons.toHtml
+                [ style "vertical-align" "middle"
+                , style "display" "inline-block"
+                ]
+        , Html.span [ class "text" ] [ Html.text name ]
+        ]
 
 
 view model =
-    case log "model" model of
-        Success result ->
-            Html.div []
-                [ createFolder result.currentFolderId result.currentFolderName
-                , Html.ul []
-                    (List.map
-                        (\a -> createFolder (Just a.id) a.name)
-                        result.audienceFolders
-                    )
-                ]
+    case model of
+        Success m ->
+            let
+                parentFolderId =
+                    AudienceFolder.getParentId m.currentFolderId m.audienceFolders
+
+                audienceFolders =
+                    List.filter (\a -> a.parent == m.currentFolderId) m.audienceFolders
+
+                audiences =
+                    List.filter (\a -> a.folder == m.currentFolderId) m.audiences
+            in
+            Html.ul []
+                (List.concat
+                    [ List.singleton (showUpFolder m.currentFolderId parentFolderId)
+                    , List.map (\a -> showAudienceFolder a.id a.name) audienceFolders
+                    , List.map (\a -> showAudience a.name) audiences
+                    ]
+                )
 
         Failure ->
             Html.text "Failed to parse JSON"

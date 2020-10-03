@@ -1,0 +1,37 @@
+body {
+  padding: 1em 2em;
+}
+
+ul {
+  max-width: 500px;
+}
+
+svg {
+  margin-right: 0.5em;
+}
+
+.button {
+  width: 100%;
+  padding: 0.5em 2em;
+  margin-bottom: 3px;
+  color: white;
+  text-align: left;
+  border-radius: 5px;
+}
+
+.parent {
+  background-color: #933;
+}
+
+.audienceFolder {
+  background-color: #11709b;
+}
+
+.audience {
+  background-color: #0195cf;
+}
+
+.text {
+  vertical-align: middle;
+  display: inline-block;
+}

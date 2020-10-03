@@ -1,6 +1,6 @@
 module Data.AudienceFolder exposing
     ( AudienceFolder, audienceFoldersJSON
-    , decoder
+    , decoder, getParentId
     )
 
 {-| Data.AudienceFolder module
@@ -15,6 +15,7 @@ This module implements everything related to audience folder resource.
 -}
 
 import Json.Decode as Decode
+import List.Extra exposing (find)
 
 
 
@@ -40,6 +41,21 @@ decoder =
                 (Decode.field "parent" (Decode.nullable Decode.int))
             )
         )
+
+
+getParentId : Maybe Int -> List AudienceFolder -> Maybe Int
+getParentId currentFolderId folders =
+    case currentFolderId of
+        Just folder ->
+            case find (\a -> a.id == folder) folders of
+                Just f ->
+                    f.parent
+
+                _ ->
+                    Nothing
+
+        _ ->
+            Nothing
 
 
 
