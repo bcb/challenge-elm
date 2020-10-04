@@ -2,8 +2,7 @@ body {
   padding: 1em 2em;
 }
 
-ul {
-  max-width: 500px;
+div {
 }
 
 svg {
@@ -11,6 +10,24 @@ svg {
 }
 
 .button {
+  width: 200px;
+  border-radius: 5px 5px 0 0;
+  padding: 0.5em 0;
+  margin-bottom: 0.5em;
+  background-color: #444;
+  color: white;
+}
+
+.selected {
+  background-color: #888;
+}
+
+ul {
+  max-width: 600px;
+  margin: auto;
+}
+
+.entry {
   width: 100%;
   padding: 0.5em 2em;
   margin-bottom: 3px;
