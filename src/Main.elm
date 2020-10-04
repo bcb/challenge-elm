@@ -111,7 +111,7 @@ view model =
     case model of
         Success m ->
             Html.div []
-                [ Html.div []
+                [ Html.div [ class "buttons" ]
                     [ showAudienceType "Authored" Audience.Authored m.currentAudienceType
                     , showAudienceType "Shared" Audience.Shared m.currentAudienceType
                     , showAudienceType "Curated" Audience.Curated m.currentAudienceType

@@ -9,8 +9,13 @@ svg {
   margin-right: 0.5em;
 }
 
+.buttons {
+  max-width: 600px;
+  margin: auto;
+}
+
 .button {
-  width: 200px;
+  width: 33%;
   border-radius: 5px 5px 0 0;
   padding: 0.5em 0;
   margin-bottom: 0.5em;
@@ -25,6 +30,7 @@ svg {
 ul {
   max-width: 600px;
   margin: auto;
+  padding: 0;
 }
 
 .entry {
