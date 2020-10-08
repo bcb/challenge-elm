@@ -1,3 +1,15 @@
+## Development:
+
+```sh
+node_modules/.bin/elm-live src/Main.elm --host 0.0.0.0 -d docs -s index.html -- --output=docs/elm-dev.js
+```
+
+## Production
+
+```sh
+elm make src/Main.elm --optimize --output docs/elm.js
+```
+
 # Challenge: Elm
 
 Hello! Welcome to the Elm Challenge.
