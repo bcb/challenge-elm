@@ -1,6 +1,6 @@
 ## Hosted
 
-https://bcb.github.io/challenge-elm/
+https://beau.click/gwi/
 
 ## Development:
 
